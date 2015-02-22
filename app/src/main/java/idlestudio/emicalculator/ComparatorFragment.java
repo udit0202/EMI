@@ -13,7 +13,7 @@ public class ComparatorFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View calculateView = inflater.inflate(R.layout.fragment_tab_two, container, false);
-        return calculateView;
+        View comparatorView = inflater.inflate(R.layout.fragment_tab_two, container, false);
+        return comparatorView;
     }
 }

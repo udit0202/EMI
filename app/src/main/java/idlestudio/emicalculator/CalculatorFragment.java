@@ -18,6 +18,7 @@ import idlestudio.emicalculator.common.EMIHelper;
 public class CalculatorFragment extends Fragment implements View.OnClickListener {
 
     View calculatorView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         calculatorView = inflater.inflate(R.layout.fragment_tab_one, container, false);
@@ -45,14 +46,50 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         EditText downPaymentET = (EditText) calculatorView.findViewById(R.id.downPayment);
         EditText tenureET = (EditText) calculatorView.findViewById(R.id.tenure);
 
-        BigDecimal principalAmount = new BigDecimal(amountET.getText().toString());
-        Float interestRate = Float.parseFloat(interestET.getText().toString());
-        BigDecimal downPayment = new BigDecimal(downPaymentET.getText().toString());
-        int tenure = Integer.parseInt(tenureET.getText().toString());
+        if( validateInputs(amountET, interestET, downPaymentET, tenureET)) {
+            BigDecimal principalAmount = new BigDecimal(amountET.getText().toString());
+            Float interestRate = Float.parseFloat(interestET.getText().toString());
+            BigDecimal downPayment = new BigDecimal(downPaymentET.getText().toString());
+            int tenure = Integer.parseInt(tenureET.getText().toString());
 
-        EMIHelper.calculateEMI(principalAmount, interestRate, downPayment, tenure);
+            EMIHelper.calculateEMI(principalAmount, interestRate, downPayment, tenure);
+            calculatorView.findViewById(R.id.resultHeading).setVisibility(View.VISIBLE);
+            calculatorView.findViewById(R.id.resultLayout).setVisibility(View.VISIBLE);
+        }
     }
 
+    public boolean validateInputs(EditText amount, EditText rate, EditText downPayment, EditText tenure){
+        boolean valid = true;
+        String alertMessage = "";
+        Long zeroValue = 0L;
+
+        if (amount.getText().toString().equals("")) {
+            valid = false;
+            alertMessage += "Amount";
+        }
+        if (rate.getText().toString().equals("")) {
+            if (!valid)
+                alertMessage += ", " + "Interest Rate";
+            else {
+                valid = false;
+                alertMessage += "InterestRate";
+            }
+        }
+        if(tenure.getText().toString().equals("")){
+            if (!valid)
+                alertMessage += ", " + "Tenure";
+            else {
+                valid = false;
+                alertMessage += "Tenure";
+            }
+        }
+        if (!valid) {
+            ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+            dialogFragment.setMessage(alertMessage);
+            dialogFragment.show(getFragmentManager(), "MyDialog");
+        }
+        return valid;
+    }
     @Override
     public void onClick(View view) {
 
