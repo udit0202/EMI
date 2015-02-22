@@ -1,86 +1,130 @@
 package idlestudio.emicalculator;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
-import java.math.BigDecimal;
-
+import idlestudio.emicalculator.common.CommonConstants;
 import idlestudio.emicalculator.common.EMIHelper;
 
 /**
  * Created by ujain on 2/20/15.
  */
-public class CalculatorFragment extends Fragment implements View.OnClickListener {
+public class CalculatorFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, TextWatcher {
 
     View calculatorView;
+    EditText amountET, interestET, downPaymentET, tenureET;
+    boolean isTenureInMonths = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         calculatorView = inflater.inflate(R.layout.fragment_tab_one, container, false);
         Button resetButton = (Button) calculatorView.findViewById(R.id.resetButton);
         Button calculateButton = (Button) calculatorView.findViewById(R.id.calculateButton);
+        RadioGroup tenureRadio = (RadioGroup) calculatorView.findViewById(R.id.tenureRadioGroup);
+
+        amountET = (EditText) calculatorView.findViewById(R.id.amount);
+        interestET = (EditText) calculatorView.findViewById(R.id.rateOfInterest);
+        downPaymentET = (EditText) calculatorView.findViewById(R.id.downPayment);
+        tenureET = (EditText) calculatorView.findViewById(R.id.tenure);
+
         resetButton.setOnClickListener(this);
         calculateButton.setOnClickListener(this);
+        tenureRadio.setOnCheckedChangeListener(this);
+
+        amountET.addTextChangedListener(this);
+        interestET.addTextChangedListener(this);
+        downPaymentET.addTextChangedListener(this);
+        tenureET.addTextChangedListener(this);
+
         return calculatorView;
     }
 
+    public void hideKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        // check if no view has focus:
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
     public void resetFields() {
-        EditText amountET = (EditText) calculatorView.findViewById(R.id.amount);
-        EditText interestET = (EditText) calculatorView.findViewById(R.id.rateOfInterest);
-        EditText downPaymentET = (EditText) calculatorView.findViewById(R.id.downPayment);
-        EditText tenureET = (EditText) calculatorView.findViewById(R.id.tenure);
         amountET.setText(null);
         interestET.setText(null);
         downPaymentET.setText(null);
         tenureET.setText(null);
+        amountET.setError(null);
+        interestET.setError(null);
+        downPaymentET.setError(null);
+        tenureET.setError(null);
     }
 
     public void calculateEMI() {
-        EditText amountET = (EditText) calculatorView.findViewById(R.id.amount);
-        EditText interestET = (EditText) calculatorView.findViewById(R.id.rateOfInterest);
-        EditText downPaymentET = (EditText) calculatorView.findViewById(R.id.downPayment);
-        EditText tenureET = (EditText) calculatorView.findViewById(R.id.tenure);
+            hideKeyboard();
 
-        if( validateInputs(amountET, interestET, downPaymentET, tenureET)) {
-            BigDecimal principalAmount = new BigDecimal(amountET.getText().toString());
+            if(validateInputs(amountET, interestET, downPaymentET, tenureET)) {
+            Long principalAmount = Long.parseLong(amountET.getText().toString());
             Float interestRate = Float.parseFloat(interestET.getText().toString());
-            BigDecimal downPayment = new BigDecimal(downPaymentET.getText().toString());
-            int tenure = Integer.parseInt(tenureET.getText().toString());
+            Long downPayment;
+            if(!("").equals(downPaymentET.getText().toString())) {
+                downPayment = Long.parseLong(downPaymentET.getText().toString());
+            } else {
+                downPayment = 0L;
+            }
 
-            EMIHelper.calculateEMI(principalAmount, interestRate, downPayment, tenure);
+            int tenure = Integer.parseInt(tenureET.getText().toString());
+            if (!isTenureInMonths) {
+                tenure *= 12;
+            }
+
+            Double emi = EMIHelper.calculateEMI(principalAmount, interestRate, downPayment, tenure);
+
+            TextView monthInstallmentTV = (TextView) calculatorView.findViewById(R.id.monthlyInstallment);
+            TextView totalInterestTV = (TextView) calculatorView.findViewById(R.id.totalInterest);
+            TextView totalAmountTV = (TextView) calculatorView.findViewById(R.id.totalAmountPayable);
+
+            monthInstallmentTV.setText(Long.toString(Math.round(emi)));
+            totalAmountTV.setText(Long.toString(Math.round(emi * tenure)));
+            totalInterestTV.setText( Long.toString(Math.round(emi * tenure) - principalAmount));
             calculatorView.findViewById(R.id.resultHeading).setVisibility(View.VISIBLE);
             calculatorView.findViewById(R.id.resultLayout).setVisibility(View.VISIBLE);
         }
     }
 
-    public boolean validateInputs(EditText amount, EditText rate, EditText downPayment, EditText tenure){
+    public boolean validateInputs(EditText amountET, EditText rateET, EditText downPayment, EditText tenure) {
         boolean valid = true;
         String alertMessage = "";
         Long zeroValue = 0L;
 
-        if (amount.getText().toString().equals("")) {
+        if (amountET.getText().toString().equals("")) {
             valid = false;
-            alertMessage += "Amount";
+            alertMessage = alertMessage.concat(CommonConstants.PRINCIPAL_AMOUNT);
         }
-        if (rate.getText().toString().equals("")) {
+        if (rateET.getText().toString().equals("")) {
             if (!valid)
-                alertMessage += ", " + "Interest Rate";
+                alertMessage = alertMessage.concat(", ").concat(CommonConstants.INTEREST_RATE);
             else {
                 valid = false;
-                alertMessage += "InterestRate";
+                alertMessage = CommonConstants.INTEREST_RATE;
             }
         }
         if(tenure.getText().toString().equals("")){
             if (!valid)
-                alertMessage += ", " + "Tenure";
+                alertMessage = alertMessage.concat(", ").concat(CommonConstants.TENURE);
             else {
                 valid = false;
-                alertMessage += "Tenure";
+                alertMessage = CommonConstants.TENURE;
             }
         }
         if (!valid) {
@@ -90,6 +134,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
         return valid;
     }
+
     @Override
     public void onClick(View view) {
 
@@ -99,4 +144,84 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             case R.id.calculateButton : calculateEMI();
         }
     }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        int currentInputHashCode = editable.hashCode();
+
+        if (currentInputHashCode == amountET.getText().hashCode()) {
+            validateAmount(amountET.getText());
+        } else if (currentInputHashCode == interestET.getText().hashCode()) {
+            validateInterestRate(interestET.getText());
+        } else if (currentInputHashCode == downPaymentET.getText().hashCode()) {
+            validateDownPayment(downPaymentET.getText());
+        } else if (currentInputHashCode == tenureET.getText().hashCode()) {
+            validateTenure(tenureET.getText());
+        }
+    }
+
+    private void validateInterestRate(Editable text) {
+        if (!text.toString().equals("")) {
+            Float interestRate = Float.parseFloat(text.toString());
+            if(interestRate == 0F){
+                interestET.setError("Enter rate % > 0");
+            } else if (interestRate > 100F) {
+                interestET.setError("Enter rate % < 100");
+            } else {
+                interestET.setError(null);
+            }
+        } else {
+            interestET.setError(null);
+        }
+    }
+
+    private void validateDownPayment(Editable text) {
+        if (!text.toString().equals("")) {
+            if (text.toString().length() > 20) {
+                downPaymentET.setError("Down Payment too Large");
+            } else if (Long.parseLong(text.toString()) > Long.parseLong(amountET.getText().toString())) {
+                downPaymentET.setError("Cannot be more than principal");
+            }
+            else {
+                downPaymentET.setError(null);
+            }
+        } else {
+            downPaymentET.setError(null);
+        }
+    }
+
+    private void validateTenure(Editable text) {
+    }
+
+    private void validateAmount(Editable text) {
+        if (!text.toString().equals("")) {
+            if (text.toString().length() > 15) {
+                amountET.setError("Amount too Large");
+            } else {
+                amountET.setError(null);
+            }
+        } else {
+            amountET.setError(null);
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        switch (i) {
+            case R.id.tenure_months :
+                isTenureInMonths = true;
+                break;
+            case R.id.tenure_years :
+                isTenureInMonths = false;
+        }
+    }
+
 }

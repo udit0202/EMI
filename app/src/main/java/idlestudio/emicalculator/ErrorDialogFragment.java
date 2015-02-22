@@ -25,7 +25,7 @@ public class ErrorDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mContext = getActivity();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-        alertDialogBuilder.setTitle("Invalid Input");
+        alertDialogBuilder.setTitle("Please provide following inputs");
         alertDialogBuilder.setMessage(getMessage());
         return alertDialogBuilder.create();
     }
