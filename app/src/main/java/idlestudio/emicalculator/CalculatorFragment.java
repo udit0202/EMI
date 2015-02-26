@@ -2,6 +2,7 @@ package idlestudio.emicalculator;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,10 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     View calculatorView;
     EditText amountET, interestET, downPaymentET, tenureET;
+    Long principalAmount, downPayment, emiRounded, totalAmountPayable, totalInterest ;
+    Double emi;
+    float interestRate;
+    int tenure;
     boolean isTenureInMonths = true;
 
     @Override
@@ -31,6 +36,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         calculatorView = inflater.inflate(R.layout.fragment_tab_one, container, false);
         Button resetButton = (Button) calculatorView.findViewById(R.id.resetButton);
         Button calculateButton = (Button) calculatorView.findViewById(R.id.calculateButton);
+        Button shareButton = (Button) calculatorView.findViewById(R.id.shareButton);
         RadioGroup tenureRadio = (RadioGroup) calculatorView.findViewById(R.id.tenureRadioGroup);
 
         amountET = (EditText) calculatorView.findViewById(R.id.amount);
@@ -40,6 +46,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
         resetButton.setOnClickListener(this);
         calculateButton.setOnClickListener(this);
+        shareButton.setOnClickListener(this);
         tenureRadio.setOnCheckedChangeListener(this);
 
         amountET.addTextChangedListener(this);
@@ -68,37 +75,52 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         interestET.setError(null);
         downPaymentET.setError(null);
         tenureET.setError(null);
+        calculatorView.findViewById(R.id.resultLayout).setVisibility(View.INVISIBLE);
+        calculatorView.findViewById(R.id.resultHeading).setVisibility(View.INVISIBLE);
+    }
+
+    public void shareResults() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, EMIHelper.constructShareText(principalAmount, interestRate, downPayment, tenure, isTenureInMonths, emiRounded, totalInterest, totalAmountPayable));
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
     }
 
     public void calculateEMI() {
             hideKeyboard();
 
             if(validateInputs(amountET, interestET, downPaymentET, tenureET)) {
-            Long principalAmount = Long.parseLong(amountET.getText().toString());
-            Float interestRate = Float.parseFloat(interestET.getText().toString());
-            Long downPayment;
-            if(!("").equals(downPaymentET.getText().toString())) {
-                downPayment = Long.parseLong(downPaymentET.getText().toString());
-            } else {
-                downPayment = 0L;
-            }
+                principalAmount = Long.parseLong(amountET.getText().toString());
+                interestRate = Float.parseFloat(interestET.getText().toString());
 
-            int tenure = Integer.parseInt(tenureET.getText().toString());
-            if (!isTenureInMonths) {
-                tenure *= 12;
-            }
+                if(!("").equals(downPaymentET.getText().toString())) {
+                    downPayment = Long.parseLong(downPaymentET.getText().toString());
+                    } else {
+                        downPayment = 0L;
+                }
 
-            Double emi = EMIHelper.calculateEMI(principalAmount, interestRate, downPayment, tenure);
+                tenure = Integer.parseInt(tenureET.getText().toString());
+                if (!isTenureInMonths) {
+                    tenure *= 12;
+                }
 
-            TextView monthInstallmentTV = (TextView) calculatorView.findViewById(R.id.monthlyInstallment);
-            TextView totalInterestTV = (TextView) calculatorView.findViewById(R.id.totalInterest);
-            TextView totalAmountTV = (TextView) calculatorView.findViewById(R.id.totalAmountPayable);
+                emi = EMIHelper.calculateEMI(principalAmount, interestRate, downPayment, tenure);
+                emiRounded = Math.round(emi);
+                totalAmountPayable = Math.round(emi * tenure);
+                totalInterest = totalAmountPayable - ( principalAmount - downPayment);
 
-            monthInstallmentTV.setText(Long.toString(Math.round(emi)));
-            totalAmountTV.setText(Long.toString(Math.round(emi * tenure)));
-            totalInterestTV.setText( Long.toString(Math.round(emi * tenure) - principalAmount));
-            calculatorView.findViewById(R.id.resultHeading).setVisibility(View.VISIBLE);
-            calculatorView.findViewById(R.id.resultLayout).setVisibility(View.VISIBLE);
+                TextView monthlyInstallmentTV = (TextView) calculatorView.findViewById(R.id.monthlyInstallment);
+                TextView totalInterestTV = (TextView) calculatorView.findViewById(R.id.totalInterest);
+                TextView totalAmountTV = (TextView) calculatorView.findViewById(R.id.totalAmountPayable);
+
+                monthlyInstallmentTV.setText(emiRounded.toString());
+                totalAmountTV.setText(totalAmountPayable.toString());
+                totalInterestTV.setText(totalInterest.toString());
+
+                calculatorView.findViewById(R.id.resultHeading).setVisibility(View.VISIBLE);
+                calculatorView.findViewById(R.id.resultLayout).setVisibility(View.VISIBLE);
+                calculatorView.findViewById(R.id.mainLayout).setBackgroundResource(R.color.darkgrey);
         }
     }
 
@@ -142,6 +164,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             case R.id.resetButton : resetFields();
                 break;
             case R.id.calculateButton : calculateEMI();
+                break;
+            case R.id.shareButton : shareResults();
         }
     }
 

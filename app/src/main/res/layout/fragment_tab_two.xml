@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp"
-    android:background="#ff868686"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:background="#ffe1e1e1"
     android:orientation="vertical"
     android:weightSum="10.5">
 
@@ -22,13 +24,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="#ffa7d5f1"
+            android:background="@drawable/topheader"
             android:orientation="horizontal"
-            android:weightSum="3">
+            android:weightSum="3.1">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="Fields"
@@ -55,11 +57,11 @@
             android:layout_weight="1.8"
             android:orientation="horizontal"
             android:paddingTop="20dp"
-            android:weightSum="3">
+            android:weightSum="3.1">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:gravity="center"
                 android:fontFamily="sans-serif"
                 android:text="Principal Amount" />
@@ -82,11 +84,11 @@
             android:layout_weight="1.8"
             android:orientation="horizontal"
             android:paddingTop="20dp"
-            android:weightSum="3">
+            android:weightSum="3.1">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:gravity="center"
                 android:fontFamily="sans-serif"
                 android:text="Rate of interest (%)" />
@@ -108,11 +110,11 @@
             android:layout_weight="1.8"
             android:orientation="horizontal"
             android:paddingTop="20dp"
-            android:weightSum="3">
+            android:weightSum="3.1">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:gravity="center"
                 android:fontFamily="sans-serif"
                 android:text="Down payment (Optional)"/>
@@ -134,11 +136,11 @@
             android:layout_weight="1.8"
             android:orientation="horizontal"
             android:paddingTop="20dp"
-            android:weightSum="3">
+            android:weightSum="3.1">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:gravity="center"
                 android:fontFamily="sans-serif"
                 android:text="Tenure (Months)" />
@@ -174,12 +176,14 @@
         android:background="#ffe6e6e6"
         android:gravity="center"
         android:fontFamily="sans-serif"
-        android:text="Loan Comparison"/>
+        android:text="Loan Comparison"
+        android:visibility="invisible"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
-        android:background="@drawable/topview">
+        android:background="@drawable/topview"
+        android:visibility="invisible">
 
     </LinearLayout>
 </LinearLayout>

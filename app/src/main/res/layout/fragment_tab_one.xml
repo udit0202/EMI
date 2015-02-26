@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:orientation="vertical"
     android:weightSum="21"
-    android:background="#ff868686">
+    android:background="#ffe1e1e1">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="11"
+        android:layout_weight="11.5"
         android:background="@drawable/topview"
         android:paddingTop="10dp"
         android:orientation="vertical"
@@ -31,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Rate of Interest"
+            android:hint="Interest-Rate/Year (%)"
             android:inputType="numberDecimal"/>
         <EditText
             android:id="@+id/downPayment"
@@ -94,7 +95,7 @@
                 android:layout_toLeftOf="@+id/centerPoint"
                 android:background="@drawable/calculate_button"
                 android:text="Reset"
-                android:textSize="12dp"
+                android:textSize="13dp"
                 android:onClick="resetFields"/>
             <TextView
                 android:id="@+id/centerPoint"
@@ -112,8 +113,9 @@
                 android:layout_toRightOf="@+id/centerPoint"
                 android:background="@drawable/calculate_button"
                 android:text="Calculate"
-                android:textSize="12dp"
-                android:onClick="calculateEMI"/>
+                android:textSize="13dp"
+                android:onClick="calculateEMI"
+                android:fontFamily="sans-serif"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -122,24 +124,24 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="0dp"
         android:gravity="center"
         android:text="EMI Calculation"
         android:fontFamily="sans-serif"
-        android:background="#ffe6e6e6"/>
-        <!--android:visibility="invisible"-->
+        android:textStyle="bold"
+        android:visibility="invisible"/>
 
     <LinearLayout
         android:id="@+id/resultLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9"
+        android:layout_weight="8.5"
         android:background="@drawable/topview"
         android:paddingTop="20dp"
         android:paddingLeft="20dp"
         android:orientation="vertical"
-        android:weightSum="7.3">
-        <!--android:visibility="invisible"-->
+        android:weightSum="7.5"
+        android:visibility="invisible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -148,19 +150,20 @@
             android:orientation="horizontal">
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
+                android:fontFamily="sans-serif"
                 android:text="Monthly Installment (EMI)"
                 android:textSize="12dp"/>
             <TextView
                 android:id="@+id/monthlyInstallment"
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0.9"
                 android:layout_marginLeft="50dp"
                 android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
-                android:text="23000"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:textColor="#ff616161"
                 android:textSize="12dp"/>
         </LinearLayout>
 
@@ -171,19 +174,20 @@
             android:orientation="horizontal">
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
+                android:fontFamily="sans-serif"
                 android:text="Total Interest"
                 android:textSize="12dp"/>
             <TextView
                 android:id="@+id/totalInterest"
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0.9"
                 android:layout_marginLeft="50dp"
                 android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
-                android:text="2300"
+                android:fontFamily="sans-serif"
+                android:textColor="#ff616161"
+                android:textStyle="bold"
                 android:textSize="12dp"/>
         </LinearLayout>
 
@@ -194,30 +198,32 @@
             android:orientation="horizontal">
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
                 android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
+                android:fontFamily="sans-serif"
                 android:text="Total Amount Payable"
                 android:textSize="12dp"/>
             <TextView
                 android:id="@+id/totalAmountPayable"
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0.9"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="50dp"
-                android:fontFamily="sans-serif-light"
-                android:text="23000"
+                android:fontFamily="sans-serif"
+                android:textColor="#ff616161"
+                android:textStyle="bold"
                 android:textSize="12dp"/>
         </LinearLayout>
 
         <Button
+            android:id="@+id/shareButton"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.3"
+            android:layout_weight="1.5"
             android:layout_gravity="center"
             android:layout_marginLeft="-25dp"
             android:layout_marginRight="0dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/calculate_button"
             android:textSize="12dp"
             android:text="Share Result"/>
